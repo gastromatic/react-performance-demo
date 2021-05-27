@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Profiler } from "react";
+import PerformanceDisplay from "./PerformanceDisplay";
+import "./App.css";
+import Fibonacci from "./fibonacci";
+
+const data: any = {};
+
+const parseRenderInfo = (
+  id: string,
+  phase: "mount" | "update",
+  actualDuration: number
+) => {
+  data[id] = [...(data[id] || []), actualDuration];
+  console.log(`${id}:\t${phase}\t-\t${actualDuration.toFixed(5)}ms`);
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Profiler id="Entire App" onRender={parseRenderInfo}>
+      <div className="container pt-5">
+        <div className="row">
+          <div className="col">
+            <Profiler id={"Fibonacci Component"} onRender={parseRenderInfo}>
+              <Fibonacci />
+            </Profiler>
+          </div>
+          <div className="col">
+            <Profiler id={"Performance Component"} onRender={parseRenderInfo}>
+              <PerformanceDisplay />
+            </Profiler>
+          </div>
+        </div>
+      </div>
+    </Profiler>
   );
 }
 
