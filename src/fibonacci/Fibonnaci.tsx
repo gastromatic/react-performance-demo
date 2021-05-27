@@ -6,7 +6,7 @@ const Fibonacci: FunctionComponent = () => {
   const [nums, setNums] = useState<string[]>([]);
 
   const onSubmit = (num: string) => {
-    setNums([...nums, num]);
+    setNums([...nums, ...num.split(",").map((str) => str.trim())]);
   };
 
   return (

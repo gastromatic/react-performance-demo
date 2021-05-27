@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useMemo } from "react";
 import fib from "./fib";
 import styled from "styled-components";
 
@@ -18,7 +18,7 @@ const StyledFibonacciCard = styled.div`
 const FibonacciCard: FunctionComponent<FibonacciCardProps> = ({ num }) => {
   const start = window.performance.now();
 
-  const res = fib(parseInt(num));
+  const res = useMemo(() => fib(parseInt(num)), [num]);
 
   const diff = window.performance.now() - start;
 

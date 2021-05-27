@@ -12,7 +12,6 @@ const FibonacciForm: FunctionComponent<FibonacciFormProps> = ({ onSubmit }) => {
   return (
     <div className="input-group mb-3">
       <input
-        type="number"
         value={num}
         onChange={(e) => onChange(e.target.value)}
         className="form-control"
