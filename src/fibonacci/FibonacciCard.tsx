@@ -1,5 +1,6 @@
-import { FunctionComponent, useMemo } from "react";
-import fib from "./fib";
+import { FunctionComponent, useEffect, useState } from "react";
+// @ts-ignore
+import worker from "workerize-loader!./fib"; // eslint-disable-line import/no-webpack-loader-syntax
 import styled from "styled-components";
 
 type FibonacciCardProps = {
@@ -16,11 +17,27 @@ const StyledFibonacciCard = styled.div`
 `;
 
 const FibonacciCard: FunctionComponent<FibonacciCardProps> = ({ num }) => {
-  const start = window.performance.now();
+  const [time, setTime] = useState<number>(0);
+  const [result, setResult] = useState();
 
-  const res = useMemo(() => fib(parseInt(num)), [num]);
+  useEffect(() => {
+    const fibWorker = worker();
 
-  const diff = window.performance.now() - start;
+    const start = window.performance.now();
+
+    fibWorker.fib(parseInt(num)).then((res: any) => {
+      setTime(window.performance.now() - start);
+      setResult(res);
+    });
+  }, [num]);
+
+  if (!result) {
+    return (
+      <StyledFibonacciCard>
+        <div className="spinner-border" role="status" />
+      </StyledFibonacciCard>
+    );
+  }
 
   return (
     <StyledFibonacciCard>
@@ -28,10 +45,10 @@ const FibonacciCard: FunctionComponent<FibonacciCardProps> = ({ num }) => {
         <b>Input</b>: {num}
       </span>
       <span>
-        <b>Result</b>: {res}
+        <b>Result</b>: {result}
       </span>
       <span>
-        <b>Calculation time</b>: {diff.toFixed(6)}ms
+        <b>Calculation time</b>: {time.toFixed(6)}ms
       </span>
     </StyledFibonacciCard>
   );
